@@ -24,6 +24,7 @@ async function checkLogin() {
 // 3. Your existing code continues here
 const STORAGE_KEY = "mobileDashboardQuickNotes_v1";
 
+
 const newNoteButton = document.getElementById("newNote");
 const saveNoteButton = document.getElementById("saveNote");
 const deleteNoteButton = document.getElementById("deleteNote");
@@ -37,50 +38,10 @@ const characterCount = document.getElementById("characterCount");
 let notes = [];
 let activeNoteId = null;
 let saveTimer = null;
-
-function createId() {
-    return `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
-}
+let currentUserId = null;
 
 function setStatus(message) {
     statusLabel.textContent = message;
-}
-
-function loadNotes() {
-    try {
-        const storedNotes = localStorage.getItem(STORAGE_KEY);
-
-        if (storedNotes) {
-            const parsedNotes = JSON.parse(storedNotes);
-
-            if (Array.isArray(parsedNotes)) {
-                notes = parsedNotes.filter(note =>
-                    note &&
-                    typeof note.id === "string" &&
-                    typeof note.title === "string" &&
-                    typeof note.content === "string"
-                );
-            }
-        }
-    } catch (error) {
-        console.error("Could not load notes:", error);
-        setStatus("Could not load saved notes");
-    }
-}
-
-function writeNotes() {
-    try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(notes));
-        return true;
-    } catch (error) {
-        console.error("Could not save notes:", error);
-        setStatus("Save failed — check browser storage");
-        return false;
-    }
-}
-
-function getActiveNote() {
-    return notes.find(note => note.id === activeNoteId);
 }
 
 function updateCharacterCount() {
@@ -98,98 +59,15 @@ function formatDate(timestamp) {
     });
 }
 
-function updateNoteFromEditor() {
-    const note = getActiveNote();
-    if (!note) return;
-
-    note.title = titleInput.value.trim();
-    note.content = contentInput.value;
-    note.updatedAt = Date.now();
-}
-
-function saveActiveNote(showMessage = true) {
-    clearTimeout(saveTimer);
-
-    if (!activeNoteId) return;
-
-    updateNoteFromEditor();
-
-    if (writeNotes()) {
-        renderNotes();
-
-        if (showMessage) {
-            setStatus("Saved");
-        }
-    }
-}
-
-function scheduleAutoSave() {
-    updateCharacterCount();
-    setStatus("Saving…");
-
-    clearTimeout(saveTimer);
-
-    saveTimer = setTimeout(() => {
-        saveActiveNote(false);
-
-        if (getActiveNote()) {
-            setStatus("Auto-saved");
-        }
-    }, 400);
-}
-
-function createNote() {
-    clearTimeout(saveTimer);
-
-    if (activeNoteId) {
-        saveActiveNote(false);
-    }
-
-    const note = {
-        id: createId(),
-        title: "",
-        content: "",
-        createdAt: Date.now(),
-        updatedAt: Date.now()
-    };
-
-    notes.unshift(note);
-    activeNoteId = note.id;
-
-    if (!writeNotes()) {
-        notes = notes.filter(item => item.id !== note.id);
-        activeNoteId = notes[0]?.id ?? null;
-        renderNotes();
-        openNote(activeNoteId);
-        return;
-    }
-
-    openNote(note.id);
-    titleInput.focus();
-}
-
-function openNote(noteId) {
-    clearTimeout(saveTimer);
-
-    if (!noteId) return;
-
-    const note = notes.find(item => item.id === noteId);
-    if (!note) return;
-
-    activeNoteId = note.id;
-    titleInput.value = note.title;
-    contentInput.value = note.content;
-
-    updateCharacterCount();
-    setStatus("Ready");
-    renderNotes();
+function getActiveNote() {
+    return notes.find(note => note.id === activeNoteId);
 }
 
 function renderNotes() {
     const searchTerm = searchInput.value.trim().toLowerCase();
 
     const filteredNotes = [...notes]
-        .sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0))
+        .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt))
         .filter(note =>
             note.title.toLowerCase().includes(searchTerm) ||
             note.content.toLowerCase().includes(searchTerm)
@@ -233,12 +111,153 @@ function renderNotes() {
 
         button.append(title, preview, date);
         button.addEventListener("click", () => openNote(note.id));
-
         savedNotesContainer.appendChild(button);
     });
 }
 
-function deleteActiveNote() {
+async function loadNotes() {
+    setStatus("Loading cloud notes...");
+
+    const { data, error } = await supabaseClient
+        .from("notes")
+        .select("id, user_id, title, content, created_at, updated_at")
+        .eq("user_id", currentUserId)
+        .order("updated_at", { ascending: false });
+
+    if (error) {
+        console.error("Could not load cloud notes:", error.message);
+        setStatus("Could not load notes");
+        return;
+    }
+
+    notes = data.map(row => ({
+        id: row.id,
+        title: row.title ?? "",
+        content: row.content ?? "",
+        createdAt: row.created_at,
+        updatedAt: row.updated_at
+    }));
+
+    if (notes.length > 0) {
+        openNote(notes[0].id);
+    } else {
+        activeNoteId = null;
+        titleInput.value = "";
+        contentInput.value = "";
+        updateCharacterCount();
+        renderNotes();
+        setStatus("Ready — create your first cloud note");
+    }
+}
+
+function openNote(noteId) {
+    clearTimeout(saveTimer);
+
+    const note = notes.find(item => item.id === noteId);
+    if (!note) return;
+
+    activeNoteId = note.id;
+    titleInput.value = note.title;
+    contentInput.value = note.content;
+
+    updateCharacterCount();
+    setStatus("Ready");
+    renderNotes();
+}
+
+async function saveActiveNote(showMessage = true) {
+    clearTimeout(saveTimer);
+
+    const note = getActiveNote();
+    if (!note) return;
+
+    note.title = titleInput.value.trim();
+    note.content = contentInput.value;
+
+    setStatus("Saving to cloud...");
+
+    const { data, error } = await supabaseClient
+        .from("notes")
+        .update({
+            title: note.title,
+            content: note.content,
+            updated_at: new Date().toISOString()
+        })
+        .eq("id", note.id)
+        .eq("user_id", currentUserId)
+        .select("id, updated_at")
+        .maybeSingle();
+
+    if (error) {
+        console.error("Could not save cloud note:", error.message);
+        setStatus("Cloud save failed — try again");
+        return;
+    }
+
+    if (!data) {
+        setStatus("Note not found or access denied");
+        return;
+    }
+
+    note.updatedAt = data.updated_at;
+    renderNotes();
+
+    if (showMessage) {
+        setStatus("Saved to cloud");
+    }
+}
+
+function scheduleAutoSave() {
+    updateCharacterCount();
+    setStatus("Unsaved changes...");
+
+    clearTimeout(saveTimer);
+
+    saveTimer = setTimeout(() => {
+        saveActiveNote(false);
+    }, 700);
+}
+
+async function createNote() {
+    clearTimeout(saveTimer);
+
+    if (activeNoteId) {
+        await saveActiveNote(false);
+    }
+
+    setStatus("Creating cloud note...");
+
+    const { data, error } = await supabaseClient
+        .from("notes")
+        .insert({
+            user_id: currentUserId,
+            title: "",
+            content: ""
+        })
+        .select("id, user_id, title, content, created_at, updated_at")
+        .single();
+
+    if (error) {
+        console.error("Could not create cloud note:", error.message);
+        setStatus("Could not create note");
+        return;
+    }
+
+    const note = {
+        id: data.id,
+        title: data.title,
+        content: data.content,
+        createdAt: data.created_at,
+        updatedAt: data.updated_at
+    };
+
+    notes.unshift(note);
+    openNote(note.id);
+    titleInput.focus();
+    setStatus("New cloud note created");
+}
+
+async function deleteActiveNote() {
     const note = getActiveNote();
     if (!note) return;
 
@@ -249,25 +268,52 @@ function deleteActiveNote() {
     }
 
     clearTimeout(saveTimer);
+    setStatus("Deleting note...");
 
-    const previousNotes = [...notes];
-    notes = notes.filter(item => item.id !== activeNoteId);
+    const { data, error } = await supabaseClient
+        .from("notes")
+        .delete()
+        .eq("id", note.id)
+        .eq("user_id", currentUserId)
+        .select("id");
 
-    if (!writeNotes()) {
-        notes = previousNotes;
-        renderNotes();
+    if (error) {
+        console.error("Could not delete cloud note:", error.message);
+        setStatus("Delete failed — try again");
         return;
     }
 
+    if (!data || data.length === 0) {
+        setStatus("Note not found or access denied");
+        return;
+    }
+
+    notes = notes.filter(item => item.id !== note.id);
     activeNoteId = null;
 
     if (notes.length > 0) {
         openNote(notes[0].id);
     } else {
-        createNote();
+        titleInput.value = "";
+        contentInput.value = "";
+        updateCharacterCount();
+        renderNotes();
     }
 
-    setStatus("Note deleted");
+    setStatus("Note deleted from cloud");
+}
+
+async function startApp() {
+    const { data, error } = await supabaseClient.auth.getSession();
+
+    if (error || !data.session) {
+        window.location.replace("../login.html");
+        return;
+    }
+
+    currentUserId = data.session.user.id;
+
+    await loadNotes();
 }
 
 newNoteButton.addEventListener("click", createNote);
@@ -280,26 +326,6 @@ deleteNoteButton.addEventListener("click", deleteActiveNote);
 
 titleInput.addEventListener("input", scheduleAutoSave);
 contentInput.addEventListener("input", scheduleAutoSave);
-
 searchInput.addEventListener("input", renderNotes);
-
-
-async function startApp() {
-    const { data, error } = await supabaseClient.auth.getSession();
-
-    if (error || !data.session) {
-        window.location.replace("../login.html");
-        return;
-    }
-
-    loadNotes();
-
-    if (notes.length > 0) {
-        notes.sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0));
-        openNote(notes[0].id);
-    } else {
-        createNote();
-    }
-}
 
 startApp();
