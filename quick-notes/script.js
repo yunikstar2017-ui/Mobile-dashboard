@@ -1,7 +1,7 @@
 
 
 // 1. Supabase connection
-const SUPABASE_URL = "https://lqhbmekvxwutmytuvhok.supabase.co/rest/v1/";
+const SUPABASE_URL = "https://lqhbmekvxwutmytuvhok.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_vADKtfs1ze_kiwXlWYSTnA_LLK3GhqD";
 
 const supabaseClient = window.supabase.createClient(
