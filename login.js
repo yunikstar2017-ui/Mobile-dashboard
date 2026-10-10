@@ -5,8 +5,8 @@
 */
 
 // 1. Add your Supabase project credentials.
-const SUPABASE_URL = "YOUR_SUPABASE_PROJECT_URL";
-const SUPABASE_PUBLISHABLE_KEY = "YOUR_SUPABASE_PUBLISHABLE_KEY";
+const SUPABASE_URL = "https://lqhbmekvxwutmytuvhok.supabase.co/rest/v1/";
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_vADKtfs1ze_kiwXlWYSTnA_LLK3GhqD";
 
 // 2. Create the Supabase client.
 const supabaseClient = window.supabase.createClient(
