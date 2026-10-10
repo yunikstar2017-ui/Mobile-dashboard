@@ -1,4 +1,12 @@
 
+const SUPABASE_URL = "https://lqhbmekvxwutmytuvhok.supabase.co/rest/v1/";
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_vADKtfs1ze_kiwXlWYSTnA_LLK3GhqD";
+
+const supabaseClient = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_PUBLISHABLE_KEY
+);
+
 const STORAGE_KEY = "mobileDashboardQuickNotes_v1";
 
 const newNoteButton = document.getElementById("newNote");
