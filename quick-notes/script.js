@@ -1,4 +1,6 @@
 
+
+// 1. Supabase connection
 const SUPABASE_URL = "https://lqhbmekvxwutmytuvhok.supabase.co/rest/v1/";
 const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_vADKtfs1ze_kiwXlWYSTnA_LLK3GhqD";
 
@@ -6,6 +8,8 @@ const supabaseClient = window.supabase.createClient(
     SUPABASE_URL,
     SUPABASE_PUBLISHABLE_KEY
 );
+
+// 2. Check whether the user is signed in
 async function checkLogin() {
     const { data, error } = await supabaseClient.auth.getSession();
 
@@ -17,6 +21,7 @@ async function checkLogin() {
     return true;
 }
 
+// 3. Your existing code continues here
 const STORAGE_KEY = "mobileDashboardQuickNotes_v1";
 
 const newNoteButton = document.getElementById("newNote");
