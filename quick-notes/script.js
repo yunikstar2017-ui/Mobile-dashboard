@@ -6,6 +6,16 @@ const supabaseClient = window.supabase.createClient(
     SUPABASE_URL,
     SUPABASE_PUBLISHABLE_KEY
 );
+async function checkLogin() {
+    const { data, error } = await supabaseClient.auth.getSession();
+
+    if (error || !data.session) {
+        window.location.replace("../login.html");
+        return false;
+    }
+
+    return true;
+}
 
 const STORAGE_KEY = "mobileDashboardQuickNotes_v1";
 
