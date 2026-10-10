@@ -278,11 +278,23 @@ contentInput.addEventListener("input", scheduleAutoSave);
 
 searchInput.addEventListener("input", renderNotes);
 
-loadNotes();
 
-if (notes.length > 0) {
-    notes.sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0));
-    openNote(notes[0].id);
-} else {
-    createNote();
+async function startApp() {
+    const { data, error } = await supabaseClient.auth.getSession();
+
+    if (error || !data.session) {
+        window.location.replace("../login.html");
+        return;
+    }
+
+    loadNotes();
+
+    if (notes.length > 0) {
+        notes.sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0));
+        openNote(notes[0].id);
+    } else {
+        createNote();
+    }
 }
+
+startApp();
