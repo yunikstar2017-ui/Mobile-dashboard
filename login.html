@@ -1,0 +1,63 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quick Notes Login</title>
+
+    <link rel="stylesheet" href="login.css">
+
+    <!-- Supabase client library -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="login.js" defer></script>
+</head>
+<body>
+    <main class="login-container">
+        <a class="back-link" href="index.html">
+            ← Back to Dashboard
+        </a>
+
+        <section class="login-card">
+            <div class="logo">📝</div>
+
+            <h1>Quick Notes</h1>
+            <p class="subtitle">
+                Sign in to access your personal notes.
+            </p>
+
+            <form id="loginForm">
+                <label for="email">Email address</label>
+                <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    placeholder="you@example.com"
+                    autocomplete="username"
+                    required
+                >
+
+                <label for="password">Password</label>
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    placeholder="Enter your password"
+                    autocomplete="current-password"
+                    required
+                >
+
+                <button type="submit" id="loginButton">
+                    Sign In
+                </button>
+
+                <p id="message" role="status" aria-live="polite"></p>
+            </form>
+
+            <p class="privacy-note">
+                Your notes are private to your account.
+            </p>
+        </section>
+    </main>
+</body>
+</html>
