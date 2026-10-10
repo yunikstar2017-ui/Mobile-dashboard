@@ -1,0 +1,109 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Quick Notes | My Dashboard</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="notes-app">
+
+        <header class="notes-header">
+            <a href="../index.html" class="back-link">
+                ← Back to Dashboard
+            </a>
+
+            <h1>📝 Quick Notes</h1>
+            <p>Your notes, orders, lists, and reminders in one place.</p>
+        </header>
+
+        <main class="notes-layout">
+
+            <!-- SAVED NOTES SIDEBAR -->
+            <aside class="notes-sidebar">
+                <div class="sidebar-heading">
+                    <h2>My Notes</h2>
+
+                    <button id="newNote" class="button button-primary" type="button">
+                        + New
+                    </button>
+                </div>
+
+                <input
+                    type="search"
+                    id="noteSearch"
+                    placeholder="Search your notes..."
+                    aria-label="Search saved notes"
+                >
+
+                <div id="savedNotes" class="saved-notes">
+                    <!-- Saved notes will appear here -->
+                </div>
+            </aside>
+
+            <!-- NOTE EDITOR -->
+            <section class="notes-editor">
+                <div class="editor-heading">
+                    <input
+                        type="text"
+                        id="noteTitle"
+                        placeholder="Untitled note"
+                        aria-label="Note title"
+                        maxlength="120"
+                    >
+
+                    <span id="noteStatus" aria-live="polite">
+                        Ready
+                    </span>
+                </div>
+
+                <textarea
+                    id="quickNote"
+                    placeholder="Start typing here...
+
+For example:
+Table 1 — Mom: Chicken momo
+Table 2 — Dad: Veg chow mein
+Drinks — 3 waters"
+                    aria-label="Note content"
+                ></textarea>
+
+                <footer class="editor-footer">
+                    <span id="characterCount">0 characters</span>
+
+                    <div class="editor-actions">
+                        <button
+                            id="saveNote"
+                            class="button button-primary"
+                            type="button"
+                        >
+                            Save Note
+                        </button>
+
+                        <button
+                            id="deleteNote"
+                            class="button button-danger"
+                            type="button"
+                        >
+                            Delete
+                        </button>
+                    </div>
+                </footer>
+            </section>
+
+        </main>
+
+        <p class="privacy-note">
+            Notes are saved in this browser on this device.
+        </p>
+
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

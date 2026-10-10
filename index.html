@@ -1,0 +1,151 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>My Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="dashboard">
+
+        <header class="dashboard-header">
+            <h1><span class="brand-icon">〖Y〗</span> 𝓜𝔂 𝓓𝓪𝓼𝓱𝓫𝓸𝓪𝓻𝓭</h1>
+            <p>Daily work and study tools.</p>
+        </header>
+
+        <main>
+            <!-- QUICK LINKS -->
+            <section class="dashboard-section">
+                <h2>Quick Links</h2>
+
+                <div class="quick-links">
+                    <a class="link-card" href="https://www.nvcc.edu/" target="_blank" rel="noopener noreferrer">
+                        <h3>🎓 NOVA</h3>
+                        <p>College portal and resources</p>
+                    </a>
+
+                    <a class="link-card" href="https://portal.my.vccs.edu/idp/AuthnEngine#/authn" target="_blank" rel="noopener noreferrer">
+                        <h3>📚 Canvas</h3>
+                        <p>Courses and assignments</p>
+                    </a>
+
+                    <a class="link-card" href="https://www.webassign.net/" target="_blank" rel="noopener noreferrer">
+                        <h3>🧮 WebAssign</h3>
+                        <p>Math and homework</p>
+                    </a>
+
+                    <a class="link-card" href="https://skillbuilder.aws/" target="_blank" rel="noopener noreferrer">
+                        <h3>☁️ AWS Skill Builder</h3>
+                        <p>Cloud learning</p>
+                    </a>
+
+                    <a class="link-card" href="https://github.com/" target="_blank" rel="noopener noreferrer">
+                        <h3>💻 GitHub</h3>
+                        <p>Projects and code</p>
+                    </a>
+
+                    <a class="link-card" href="https://chatgpt.com/" target="_blank" rel="noopener noreferrer">
+                        <h3>🤖 ChatGPT</h3>
+                        <p>Study and productivity</p>
+                    </a>
+                </div>
+
+                <p class="helper-text">
+                    You can customize these links to your preferred pages.
+                </p>
+            </section>
+
+            <!-- DICTIONARY -->
+            <section class="dashboard-section">
+                <h2>📖 Dictionary </h2>
+
+                <div class="tool-card">
+                    <div class="search-row">
+                        <input
+                            type="text"
+                            id="wordInput"
+                            placeholder="Type or paste a word..."
+                            aria-label="Word to define"
+                        >
+                        <button class="button button-primary" id="defineButton">
+                            Define
+                        </button>
+                    </div>
+
+                    <div class="dictionary-actions">
+                        <button class="button button-secondary" id="synonymsButton">
+                            Synonyms
+                        </button>
+
+                        <button class="button button-secondary" id="pronounceButton">
+                            🔊 Pronounce
+                        </button>
+                    </div>
+
+                    <div id="dictionaryResult" aria-live="polite"></div>
+                </div>
+            </section>
+
+            <!-- POMODORO -->
+            <section class="dashboard-section">
+                <h2>🕜 Pomodoro</h2>
+
+                <div class="tool-card pomodoro">
+                    <p class="timer-mode" id="timerMode">25 minute focus</p>
+
+                    <div class="timer-display" id="timerDisplay">
+                        25:00
+                    </div>
+
+                    <div class="timer-presets">
+                        <button class="button button-secondary" data-minutes="25" data-mode="Focus">
+                            25 Focus
+                        </button>
+
+                        <button class="button button-secondary" data-minutes="5" data-mode="Break">
+                            5 Break
+                        </button>
+
+                        <button class="button button-secondary" data-minutes="50" data-mode="Focus">
+                            50 Focus
+                        </button>
+                    </div>
+
+                    <div class="timer-actions">
+                        <button class="button button-primary" id="startTimer">
+                            ▶ Start
+                        </button>
+
+                        <button class="button button-secondary" id="resetTimer">
+                            ↻ Reset
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- QUICK NOTES -->
+
+            <!-- QUICK NOTES -->
+            <section class="dashboard-section">
+                <h2>📝 Quick Notes</h2>
+
+                <a class="link-card quick-notes-link" href="quick-notes/index.html">
+                    <h3>Open Quick Notes →</h3>
+                    <p>Create, search, and manage your saved notes.</p>
+                    <p>Notes automatically save in your browser.</p>
+                </a>
+            </section>
+        </main>
+
+        <footer>
+            <p>My Dashboard · Your personal productivity space</p>
+        </footer>
+
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
