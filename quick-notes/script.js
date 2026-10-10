@@ -34,6 +34,7 @@ const titleInput = document.getElementById("noteTitle");
 const contentInput = document.getElementById("quickNote");
 const statusLabel = document.getElementById("noteStatus");
 const characterCount = document.getElementById("characterCount");
+const signOutButton = document.getElementById("signOut")
 
 let notes = [];
 let activeNoteId = null;
@@ -257,6 +258,21 @@ async function createNote() {
     setStatus("New cloud note created");
 }
 
+async function signOut () {
+     // Ask Supabase to sign out the current user
+    const { error } = await ____________________;
+    if (error) {
+        console.error("Sign out failed:", error.message);
+        return;
+    }
+      // Send the user back to the login page
+    window.location.href = "../login.html";
+}
+
+// Run the function when the button is clicked
+signOutButton.addEventListener("click", signOut);
+
+    
 async function deleteActiveNote() {
     const note = getActiveNote();
     if (!note) return;
