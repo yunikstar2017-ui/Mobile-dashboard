@@ -66,11 +66,13 @@ loginForm.addEventListener("submit", async function (event) {
             });
 
         if (error) {
-            showMessage(
-                "Sign-in failed. Check your email and password, then try again."
-            );
-            return;
-        }
+    console.error("Supabase sign-in error:", error.message);
+
+    showMessage(
+        `Sign-in failed: ${error.message}`
+    );
+    return;
+}
 
         if (data.session) {
             showMessage("Login successful! Opening your notes...");
