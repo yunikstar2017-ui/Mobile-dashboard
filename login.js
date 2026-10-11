@@ -19,6 +19,7 @@ const loginForm = document.getElementById("loginForm");
 const emailInput = document.getElementById("email");
 const passwordInput = document.getElementById("password");
 const loginButton = document.getElementById("loginButton");
+const googleLoginButton = document.getElementById("googleLoginButton");
 const message = document.getElementById("message");
 
 // 4. Where to go after a successful login.
@@ -44,6 +45,35 @@ async function checkExistingSession() {
 }
 
 checkExistingSession();
+
+const NOTES_URL =
+    "https://yunikstar2017-ui.github.io/Mobile-dashboard/quick-notes/index.html";
+
+// Handle Google sign-in.
+googleLoginButton.addEventListener("click", async function () {
+    googleLoginButton.disabled = true;
+    googleLoginButton.textContent = "Connecting to Google...";
+    showMessage("");
+
+    try {
+        const { error } = await supabaseClient.auth.signInWithOAuth({
+            provider: "google",
+            options: {
+                redirectTo: NOTES_URL
+            }
+        });
+
+        if (error) {
+            showMessage("Google sign-in failed: " + error.message);
+            googleLoginButton.disabled = false;
+            googleLoginButton.textContent = "Continue with Google";
+        }
+    } catch (error) {
+        showMessage("Unable to connect to Google. Please try again.");
+        googleLoginButton.disabled = false;
+        googleLoginButton.textContent = "Continue with Google";
+    }
+});
 
 // 6. Handle the login form when the user clicks Sign In.
 loginForm.addEventListener("submit", async function (event) {
