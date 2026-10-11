@@ -260,13 +260,13 @@ async function createNote() {
 
 async function signOut () {
      // Ask Supabase to sign out the current user
-    const { error } = await ____________________;
+    const { error } = await supabaseClient.auth.signOut();
     if (error) {
         console.error("Sign out failed:", error.message);
         return;
     }
       // Send the user back to the login page
-    window.location.href = "login.html";
+    window.location.href = "https://yunikstar2017-ui.github.io/Mobile-dashboard/login.html";
 }
 
 
