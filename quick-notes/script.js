@@ -258,8 +258,6 @@ async function createNote() {
     setStatus("New cloud note created");
 }
 
-const signOutButton = document.getElementById("signOut");
-
 async function signOut () {
      // Ask Supabase to sign out the current user
     const { error } = await supabaseClient.auth.signOut();
@@ -268,10 +266,8 @@ async function signOut () {
         return;
     }
       // Send the user back to the login page
-    window.location.href = "https://yunikstar2017-ui.github.io/Mobile-dashboard/login.html";
+    window.location.href = "../login.html";
 }
-
-
 // Run the function when the button is clicked
 signOutButton.addEventListener("click", signOut);
 
