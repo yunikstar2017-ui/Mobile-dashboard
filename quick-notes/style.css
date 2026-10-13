@@ -311,3 +311,26 @@ button {
         flex: 1;
     }
 }
+
+.note-preview {
+    margin-top: 12px;
+    padding: 14px;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    overflow-wrap: anywhere;
+    line-height: 1.7;
+}
+
+.note-preview:empty {
+    display: none;
+}
+
+.note-preview .note-link {
+    color: #2563eb;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.note-preview .note-link:hover {
+    color: #1d4ed8;
+}
