@@ -160,6 +160,7 @@ function openNote(noteId) {
     activeNoteId = note.id;
     titleInput.value = note.title;
     contentInput.value = note.content;
+    renderNotePreview();
 
     updateCharacterCount();
     setStatus("Ready");
@@ -210,6 +211,7 @@ async function saveActiveNote(showMessage = true) {
 
 function scheduleAutoSave() {
     updateCharacterCount();
+    renderNotePreview();
     setStatus("Unsaved changes...");
 
     clearTimeout(saveTimer);
@@ -316,6 +318,47 @@ async function deleteActiveNote() {
     }
 
     setStatus("Note deleted from cloud");
+}
+
+function makeLinksClickable(text) {
+  const escapeHTML = (value) =>
+    value.replace(/[&<>"']/g, (char) => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;"
+    })[char]);
+
+  const escapedText = escapeHTML(text);
+
+  const urlPattern = /\bhttps?:\/\/[^\s<]+/gi;
+
+  return escapedText
+    .replace(urlPattern, (url) => {
+      // Remove common punctuation from the end of a URL.
+      const cleanUrl = url.replace(/[.,!?;:)\]]+$/, "");
+      const trailing = url.slice(cleanUrl.length);
+
+      return `<a href="${cleanUrl}"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="note-link">${cleanUrl}</a>${trailing}`;
+    })
+    .replace(/\n/g, "<br>");
+}
+
+function renderNotePreview() {
+    const preview = document.getElementById("notePreview");
+
+    if (!preview) return;
+
+    if (!contentInput.value.trim()) {
+        preview.replaceChildren();
+        return;
+    }
+
+    preview.innerHTML = makeLinksClickable(contentInput.value);
 }
 
 async function startApp() {
